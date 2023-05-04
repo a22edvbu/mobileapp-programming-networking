@@ -8,8 +8,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class MainActivity extends AppCompatActivity implements JsonTask.JsonTaskListener {
@@ -22,18 +27,22 @@ public class MainActivity extends AppCompatActivity implements JsonTask.JsonTask
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new JsonFile(this, this).execute(JSON_FILE);
+        new JsonTask(this).execute(JSON_URL);
     }
 
     @Override
     public void onPostExecute(String json) {
         Log.d("MainActivity", json);
 
-        ArrayList<RecycleItems> items = new ArrayList<>(Arrays.asList(
-                new RecycleItems("Matterhorn"),
-                new RecycleItems("Mont Blanc"),
-                new RecycleItems("Denali")
-        ));
+        ArrayList<RecycleItems> items = new ArrayList<>();
+
+        Gson gson = new Gson();
+        Type type = new TypeToken<List<Mountain>>() {}.getType();
+        List<Mountain> MountainCollection = gson.fromJson(json, type);
+
+        for (Mountain m: MountainCollection) {
+            items.add(new RecycleItems(m.getName()));
+        }
         RecycleAdapter adapter = new RecycleAdapter(this, items, new RecycleAdapter.OnClickListener() {
             @Override
             public void onClick(RecycleItems items) {
