@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RecycleView</string>
+    <string name="min_recycleview_app">Min RecycleView app!</string>
 </resources>
